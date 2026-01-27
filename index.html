@@ -1,0 +1,2662 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculation Brainrot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff8c00;
+            --secondary-color: #ff5500;
+            --accent-color: #ffa726;
+            --dark-bg: #121212;
+            --container-bg: rgba(30, 30, 30, 0.9);
+            --input-bg: #222;
+            --text-color: #fff;
+            --light-text: #aaa;
+            --error-color: #ff5555;
+            --success-color: #55ff55;
+            --button-text-color: #fff;
+            --hint-text-color: #fff;
+            --time-unit-bg: rgba(255, 140, 0, 0.1);
+            --time-unit-border: rgba(255, 140, 0, 0.3);
+            --male-color: #42AAFF;
+            --female-color: #FF1493;
+            --copy-btn-color: #C0C0C0;
+            --clear-progress-color: #560319;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .container {
+            max-width: 850px;
+            width: 100%;
+            background-color: var(--container-bg);
+            border-radius: 20px;
+            padding: 35px 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            position: relative;
+            overflow: visible;
+            margin: 0 auto;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+        }
+        
+        .history-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(to right, #4a4a4a, #666666);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+            color: white;
+        }
+        
+        .history-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(to right, #5a5a5a, #767676);
+        }
+        
+        .history-btn i {
+            font-size: 1.4rem;
+        }
+        
+        .profile-btn {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(to right, #4a4a4a, #666666);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+            color: white;
+        }
+        
+        .profile-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(to right, #5a5a5a, #767676);
+        }
+        
+        .profile-btn i {
+            font-size: 1.4rem;
+        }
+        
+        .profile-panel {
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            width: 320px;
+            max-height: 70vh;
+            background-color: rgba(40, 40, 40, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            z-index: 998;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-color);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .profile-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .profile-header {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .profile-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .profile-input-group label {
+            font-size: 0.95rem;
+            color: var(--light-text);
+        }
+        
+        .username-input {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 2px solid #444;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .username-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .gender-selection {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .gender-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #333;
+            color: var(--text-color);
+        }
+        
+        .gender-btn.male:hover, .gender-btn.male.active {
+            background-color: var(--male-color);
+            color: white;
+        }
+        
+        .gender-btn.female:hover, .gender-btn.female.active {
+            background-color: var(--female-color);
+            color: white;
+        }
+        
+        .language-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .language-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #333;
+            color: var(--text-color);
+        }
+        
+        .language-btn:hover, .language-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .username-hint {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+        
+        .profile-saved {
+            text-align: center;
+            padding: 8px;
+            background-color: rgba(85, 255, 85, 0.1);
+            color: var(--success-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .profile-saved.show {
+            opacity: 1;
+        }
+        
+        .clear-progress-btn {
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(to right, var(--clear-progress-color), #8b0030);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .clear-progress-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #8b0030, var(--clear-progress-color));
+        }
+        
+        .history-panel {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            width: 350px;
+            max-height: 500px;
+            background-color: rgba(40, 40, 40, 0.95);
+            border-radius: 15px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 998;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-color);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .history-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .history-header {
+            padding: 15px;
+            background-color: #333;
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+        }
+        
+        .clear-history-btn {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .clear-history-btn:hover {
+            background: #ff3333;
+        }
+        
+        .history-items {
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        
+        .history-item {
+            background-color: rgba(60, 60, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+            background-color: rgba(70, 70, 70, 0.9);
+        }
+        
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .history-item-date {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item-result {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .history-item-params {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+        
+        .history-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .history-items::-webkit-scrollbar,
+        .vertical-menu::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .history-items::-webkit-scrollbar-track,
+        .vertical-menu::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 4px;
+        }
+        
+        .history-items::-webkit-scrollbar-thumb,
+        .vertical-menu::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        .history-items::-webkit-scrollbar-thumb:hover,
+        .vertical-menu::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .header p {
+            color: var(--light-text);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            margin-bottom: 35px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .input-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .input-group label i {
+            font-size: 1.1rem;
+        }
+        
+        .cost-input-container, .income-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+        
+        .cost-input-container input, .income-input-container input {
+            flex: 1;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 2px solid #444;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+        
+        .cost-input-container input:focus, .income-input-container input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .cost-input-container input:hover, .income-input-container input:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .suffix-btn {
+            padding: 12px 16px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 90px;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            height: 48px;
+            position: relative;
+        }
+        
+        .suffix-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .select-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 100;
+            width: 100%;
+        }
+        
+        .select-btn {
+            padding: 12px 20px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: center;
+            z-index: 101;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            height: 48px;
+        }
+        
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .selected-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            min-width: 70px;
+            text-align: center;
+        }
+        
+        .calculate-btn {
+            grid-column: 1 / -1;
+            padding: 16px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            height: 56px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .copy-result-btn {
+            margin-top: 15px;
+            padding: 10px 16px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            height: 44px;
+        }
+        
+        .copy-result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .copy-result-btn.error {
+            animation: shake 0.5s ease, blinkRed 1s ease;
+            background: linear-gradient(to right, var(--error-color), #ff3333);
+        }
+        
+        .copy-result-btn.success {
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            animation: pulseSuccess 1s ease;
+        }
+        
+        /* НОВЫЙ СТИЛЬ ДЛЯ ВЕРТИКАЛЬНЫХ МЕНЮ */
+        .vertical-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 250px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--primary-color);
+            overflow-y: auto;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        
+        .vertical-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .menu-header {
+            padding: 12px;
+            background-color: #333;
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.95rem;
+        }
+        
+        .menu-items {
+            padding: 8px 0;
+        }
+        
+        .menu-item {
+            padding: 10px 16px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--primary-color);
+            color: var(--button-text-color);
+            padding-left: 20px;
+        }
+        
+        .menu-item.selected {
+            background-color: var(--secondary-color);
+            color: var(--button-text-color);
+            font-weight: bold;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .suffix-info {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            margin-left: 8px;
+        }
+        
+        .result-container {
+            background-color: rgba(40, 40, 40, 0.8);
+            border-radius: 15px;
+            padding: 22px;
+            margin-top: 20px;
+            border-left: 5px solid var(--primary-color);
+            animation: fadeIn 1s ease-out 0.6s both;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .result-container h2 {
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .result-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            background-color: rgba(20, 20, 20, 0.7);
+            border-radius: 10px;
+            margin-top: 8px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            flex-direction: column;
+        }
+        
+        .death-warning {
+            color: var(--error-color);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 8px;
+            text-align: center;
+            padding: 8px;
+            background-color: rgba(255, 85, 85, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--error-color);
+            animation: pulseWarning 2s infinite;
+        }
+        
+        .time-units {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+            padding: 8px;
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+        }
+        
+        .time-unit {
+            background-color: var(--time-unit-bg);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--time-unit-border);
+            font-size: 0.85rem;
+        }
+        
+        .time-unit .value {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .time-unit .label {
+            color: var(--light-text);
+            margin-left: 4px;
+        }
+        
+        .game-info {
+            background-color: rgba(40, 40, 40, 0.8);
+            border-radius: 15px;
+            padding: 22px;
+            margin-top: 25px;
+            border: 1px solid var(--primary-color);
+            animation: fadeIn 1s ease-out 1.2s both;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .game-info h3 {
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .game-info p {
+            color: var(--light-text);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .bypass-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .bypass-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        .sources-info {
+            background-color: rgba(40, 40, 40, 0.8);
+            border-radius: 15px;
+            padding: 22px;
+            margin-top: 25px;
+            border: 1px solid var(--primary-color);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sources-info h3 {
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sources-info p {
+            color: var(--light-text);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .sources-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .sources-info a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #777;
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .company-name {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .company-name:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        .brainrot-icon {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            animation: spin 10s linear infinite;
+            margin-right: 8px;
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            margin-top: 5px;
+            font-size: 0.85rem;
+            min-height: 20px;
+        }
+        
+        .copy-error {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+        
+        /* НОВЫЙ СТИЛЬ ДЛЯ МОБИЛЬНЫХ МЕНЮ */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-menu {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%;
+            max-width: 400px;
+            max-height: 70vh;
+            background-color: #2a2a2a;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+            border: 3px solid var(--primary-color);
+            overflow: hidden;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .mobile-menu-header {
+            padding: 15px;
+            background-color: #333;
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .mobile-menu-header i {
+            font-size: 1.2rem;
+        }
+        
+        .mobile-menu-items {
+            padding: 10px;
+            overflow-y: auto;
+            max-height: calc(70vh - 60px);
+        }
+        
+        .mobile-menu-item {
+            padding: 12px 16px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .mobile-menu-item:hover, .mobile-menu-item:active {
+            background-color: var(--primary-color);
+            color: var(--button-text-color);
+            transform: translateX(5px);
+        }
+        
+        .mobile-menu-item.selected {
+            background-color: var(--secondary-color);
+            color: var(--button-text-color);
+            font-weight: bold;
+        }
+        
+        .mobile-menu-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); }
+            50% { box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); }
+            100% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); }
+        }
+        
+        @keyframes pulseWarning {
+            0% { box-shadow: 0 0 0 0 rgba(255, 85, 85, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 85, 85, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 85, 85, 0); }
+        }
+        
+        @keyframes pulseSuccess {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes blinkRed {
+            0%, 100% { background: linear-gradient(to right, var(--error-color), #ff3333); }
+            50% { background: linear-gradient(to right, #ff3333, var(--error-color)); }
+        }
+        
+        @media (max-width: 1024px) {
+            .container { padding: 25px; max-width: 95%; }
+            .calculator-form { grid-template-columns: 1fr; gap: 18px; }
+            .calculate-btn { grid-column: span 1; width: 100%; }
+            .header h1 { font-size: 2.3rem; }
+            .select-button { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .selected-value { margin-left: 0; margin-top: 8px; }
+            .vertical-menu { display: none; }
+            .mobile-menu { display: block; }
+            .time-units { flex-direction: column; align-items: center; }
+            .result-value { font-size: 2rem; }
+            .history-panel { width: 320px; max-height: 450px; top: 90px; }
+            .profile-panel { width: 300px; right: 25px; }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .container { padding: 20px; max-width: 100%; border-radius: 16px; margin-top: 20px; }
+            .calculator-form { grid-template-columns: 1fr; gap: 15px; }
+            .header h1 { font-size: 1.9rem; }
+            .header p { font-size: 0.95rem; }
+            .history-btn, .profile-btn { width: 44px; height: 44px; }
+            .history-btn { top: 12px; left: 12px; }
+            .profile-btn { top: 12px; right: 12px; }
+            .profile-panel { top: 65px; right: 12px; width: calc(100vw - 40px); max-width: 300px; }
+            .history-panel { top: 70px; left: 12px; width: calc(100vw - 24px); max-height: 400px; }
+            .cost-input-container, .income-input-container { flex-direction: column; gap: 6px; }
+            .suffix-btn, .select-btn { width: 100%; min-width: auto; padding: 10px 12px; font-size: 0.95rem; height: 44px; }
+            .calculate-btn { padding: 14px; font-size: 1.1rem; height: 52px; }
+            .result-value { font-size: 1.7rem; padding: 10px; min-height: 60px; }
+            .game-info, .sources-info, .result-container { padding: 18px; }
+            .selected-value { font-size: 1.1rem; }
+            .vertical-menu {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.7rem; }
+            .container { padding: 16px; margin-top: 15px; }
+            .calculator-form { gap: 12px; }
+            .input-group label { font-size: 0.95rem; }
+            .cost-input-container input, .income-input-container input { padding: 10px 12px; font-size: 1rem; }
+            .suffix-btn, .select-btn { padding: 10px; font-size: 0.9rem; height: 42px; }
+            .calculate-btn { padding: 12px; font-size: 1rem; height: 48px; }
+            .result-value { font-size: 1.5rem; }
+            .history-item-params { grid-template-columns: 1fr; }
+            .brainrot-icon { font-size: 1.5rem; }
+            .gender-btn { font-size: 0.9rem; padding: 8px; }
+            .mobile-menu { width: 95%; max-width: 350px; }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-overlay,
+            .mobile-menu {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Мобильное меню для выбора значений -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header" id="mobile-menu-header">
+            <i class="fas fa-list"></i>
+            <span id="mobile-menu-title">Выберите значение</span>
+        </div>
+        <div class="mobile-menu-items" id="mobile-menu-items"></div>
+    </div>
+    
+    <div class="history-btn" id="history-btn">
+        <i class="fas fa-history"></i>
+    </div>
+    
+    <div class="profile-btn" id="profile-btn">
+        <i class="fas fa-user"></i>
+    </div>
+    
+    <div class="profile-panel" id="profile-panel">
+        <div class="profile-header">
+            <i class="fas fa-user-circle"></i>
+            <span data-i18n="profile">Профиль</span>
+        </div>
+        <div class="profile-form">
+            <div class="profile-input-group">
+                <label for="username-input" data-i18n="username">Имя пользователя</label>
+                <input type="text" id="username-input" class="username-input" placeholder="Введите имя" maxlength="16">
+                <div class="username-hint" data-i18n="usernameHint">Английские буквы, цифры и _ (от 3 до 16 символов)</div>
+            </div>
+            
+            <div class="profile-input-group">
+                <label for="aka-input" data-i18n="aka">a.k.a.</label>
+                <input type="text" id="aka-input" class="username-input" placeholder="Введите второе имя" maxlength="16">
+                <div class="username-hint" data-i18n="akaHint">Второе имя, не должно совпадать с первым</div>
+            </div>
+            
+            <div class="profile-input-group">
+                <label data-i18n="gender">Ваш пол</label>
+                <div class="gender-selection">
+                    <button class="gender-btn male" data-gender="male">
+                        <i class="fas fa-mars"></i>
+                        <span data-i18n="male">Мужской</span>
+                    </button>
+                    <button class="gender-btn female" data-gender="female">
+                        <i class="fas fa-venus"></i>
+                        <span data-i18n="female">Женский</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="profile-input-group">
+                <label data-i18n="language">Язык</label>
+                <div class="language-selection">
+                    <button class="language-btn" data-lang="ru">
+                        <i class="fas fa-language"></i>
+                        <span>Русский</span>
+                    </button>
+                    <button class="language-btn" data-lang="en">
+                        <i class="fas fa-language"></i>
+                        <span>English</span>
+                    </button>
+                    <button class="language-btn" data-lang="uk">
+                        <i class="fas fa-language"></i>
+                        <span>Українська</span>
+                    </button>
+                    <button class="language-btn" data-lang="hi">
+                        <i class="fas fa-language"></i>
+                        <span>हिन्दी</span>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="clear-progress-btn" id="clear-progress-btn">
+                <i class="fas fa-trash-alt"></i>
+                <span data-i18n="clearProgress">Очистить прогресс</span>
+            </button>
+            
+            <div class="profile-saved" id="profile-saved" data-i18n="dataSaved">Данные сохранены!</div>
+        </div>
+    </div>
+    
+    <div class="history-panel" id="history-panel">
+        <div class="history-header">
+            <div class="history-title" data-i18n="calculationHistory">История расчетов</div>
+            <button class="clear-history-btn" id="clear-history-btn" data-i18n="clear">Очистить</button>
+        </div>
+        <div class="history-items" id="history-items">
+            <div class="history-empty" id="history-empty" data-i18n="historyEmpty">История расчетов пуста</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-brain brainrot-icon"></i>
+                Calculation Brainrot
+            </h1>
+            <p data-i18n="description">Поможет рассчитать, за какой срок окупятся вложения в Brainrot. Введите значения в поля ниже и нажмите кнопку "Рассчитать"</p>
+        </div>
+        
+        <div class="calculator-form">
+            <div class="input-group">
+                <label for="cost"><i class="fas fa-tag"></i> <span data-i18n="brainrotCost">Стоимость Brainrot</span></label>
+                <div class="cost-input-container">
+                    <input type="text" id="cost" placeholder="Пример: 875, 1.5, 15">
+                    <button class="suffix-btn" id="cost-suffix-btn">
+                        <i class="fas fa-chevron-right"></i> <span id="cost-suffix-value" data-i18n="noSuffix">Без суффикса</span>
+                    </button>
+                    
+                    <div class="vertical-menu" id="cost-suffix-menu">
+                        <div class="menu-header" data-i18n="chooseCostSuffix">Выберите суффикс стоимости</div>
+                        <div class="menu-items">
+                            <div class="menu-item" data-suffix="" data-multiplier="1">
+                                <span data-i18n="noSuffix">Без суффикса</span>
+                            </div>
+                            <div class="menu-item" data-suffix="k" data-multiplier="1000">
+                                <span>k (кило)</span>
+                            </div>
+                            <div class="menu-item" data-suffix="m" data-multiplier="1000000">
+                                <span>m (миллион)</span>
+                            </div>
+                            <div class="menu-item" data-suffix="b" data-multiplier="1000000000">
+                                <span>b (миллиард)</span>
+                            </div>
+                            <div class="menu-item" data-suffix="qa" data-multiplier="1000000000000">
+                                <span>qa (квадриллион)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="error-message" id="cost-error"></div>
+            </div>
+            
+            <div class="input-group">
+                <label for="income"><i class="fas fa-coins"></i> <span data-i18n="incomePerSecond">Доход в секунду</span></label>
+                <div class="income-input-container">
+                    <input type="text" id="income" placeholder="Пример: 50, 2.5, 100">
+                    <button class="suffix-btn" id="income-suffix-btn">
+                        <i class="fas fa-chevron-right"></i> <span id="income-suffix-value" data-i18n="noSuffix">Без суффикса</span>
+                    </button>
+                    
+                    <div class="vertical-menu" id="income-suffix-menu">
+                        <div class="menu-header" data-i18n="chooseIncomeSuffix">Выберите суффикс дохода</div>
+                        <div class="menu-items">
+                            <div class="menu-item" data-suffix="" data-multiplier="1">
+                                <span data-i18n="noSuffix">Без суффикса</span>
+                            </div>
+                            <div class="menu-item" data-suffix="k" data-multiplier="1000">
+                                <span>k (кило)</span>
+                            </div>
+                            <div class="menu-item" data-suffix="m" data-multiplier="1000000">
+                                <span>m (миллион)</span>
+                            </div>
+                            <div class="menu-item" data-suffix="b" data-multiplier="1000000000">
+                                <span>b (миллиард)</span>
+                            </div>
+                            <div class="menu-item" data-suffix="qa" data-multiplier="1000000000000">
+                                <span>qa (квадриллион)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="error-message" id="income-error"></div>
+            </div>
+            
+            <div class="input-group">
+                <label><i class="fas fa-redo"></i> <span data-i18n="rebirthBoost">Буст от перерождений</span></label>
+                <div class="select-button">
+                    <button class="select-btn" id="rebirth-btn">
+                        <i class="fas fa-chevron-right"></i> <span data-i18n="choose">Выбрать</span>
+                    </button>
+                    <div class="selected-value" id="rebirth-value">x1</div>
+                    
+                    <div class="vertical-menu" id="rebirth-menu">
+                        <div class="menu-header" data-i18n="chooseMultiplier">Выберите множитель</div>
+                        <div class="menu-items">
+                            <div class="menu-item" data-value="1">x1</div>
+                            <div class="menu-item" data-value="2">x2</div>
+                            <div class="menu-item" data-value="3">x3</div>
+                            <div class="menu-item" data-value="4">x4</div>
+                            <div class="menu-item" data-value="5">x5</div>
+                            <div class="menu-item" data-value="6">x6</div>
+                            <div class="menu-item" data-value="7">x7</div>
+                            <div class="menu-item" data-value="8">x8</div>
+                            <div class="menu-item" data-value="9">x9</div>
+                            <div class="menu-item" data-value="10">x10</div>
+                            <div class="menu-item" data-value="11">x11</div>
+                            <div class="menu-item" data-value="12">x12</div>
+                            <div class="menu-item" data-value="13">x13</div>
+                            <div class="menu-item" data-value="15">x15</div>
+                            <div class="menu-item" data-value="16">x16</div>
+                            <div class="menu-item" data-value="17">x17</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>
+                    <i class="fas fa-users"></i> <span data-i18n="friendsBoost">Буст от друзей</span>
+                </label>
+                <div class="select-button">
+                    <button class="select-btn" id="friends-btn">
+                        <i class="fas fa-chevron-right"></i> <span data-i18n="choose">Выбрать</span>
+                    </button>
+                    <div class="selected-value" id="friends-value">50%</div>
+                    
+                    <div class="vertical-menu" id="friends-menu">
+                        <div class="menu-header" data-i18n="choosePercentage">Выберите процент</div>
+                        <div class="menu-items">
+                            <div class="menu-item" data-value="1.0">0%</div>
+                            <div class="menu-item" data-value="1.1">10%</div>
+                            <div class="menu-item" data-value="1.2">20%</div>
+                            <div class="menu-item" data-value="1.3">30%</div>
+                            <div class="menu-item" data-value="1.4">40%</div>
+                            <div class="menu-item" data-value="1.5">50%</div>
+                            <div class="menu-item" data-value="1.6">60%</div>
+                            <div class="menu-item" data-value="1.7">70%</div>
+                            <div class="menu-item" data-value="1.8">80%</div>
+                            <div class="menu-item" data-value="1.9">90%</div>
+                            <div class="menu-item" data-value="2.0">100%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="calculate-btn" id="calculate">
+                <i class="fas fa-calculator"></i>
+                <span data-i18n="calculate">Рассчитать</span>
+            </button>
+        </div>
+        
+        <div class="result-container">
+            <h2><i class="fas fa-chart-line"></i> <span data-i18n="calculationResult">Результат расчета:</span></h2>
+            <div class="result-value" id="result" data-i18n="enterValues">Введите значения и нажмите "Рассчитать"</div>
+            <div id="death-warning" class="death-warning" style="display: none;"></div>
+            <div id="time-units" class="time-units" style="display: none;"></div>
+            
+            <button class="copy-result-btn" id="copy-result-btn" style="display: none;">
+                <i class="fas fa-copy"></i>
+                <span data-i18n="copyResult">Скопировать результат</span>
+            </button>
+            <div class="copy-error" id="copy-error"></div>
+        </div>
+        
+        <div class="game-info">
+            <h3><i class="fas fa-gamepad"></i> <span>Обратите внимание</span></h3>
+            <p>Данный сайт работает только для игры <strong>Steal a Brainrot</strong> в Roblox</p>
+            <p>Brainrot - питомец или предмет в игре</p>
+            <a href="https://telegra.ph/Resheniya-dlya-ozhivleniya-YouTube-05-07" target="_blank" class="bypass-link">
+                <i class="fas fa-external-link-alt"></i> Способы обхода блокировок Roblox в РФ
+            </a>
+        </div>
+        
+        <div class="sources-info">
+            <h3><i class="fas fa-book"></i> <span data-i18n="informationSources">Источники информации</span></h3>
+            <p>Данные о бустах от перерождений взяты из источника: <a href="https://stealabrainrot.fandom.com/wiki/Rebirth" target="_blank">Steal a Brainrot Wiki - Rebirth</a></p>
+        </div>
+        
+        <div class="footer">
+            <p>Calculation Brainrot © 2026 | by <a href="https://github.com/ZombakLizard" target="_blank" class="company-name">ZombakLizard</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculate');
+            const costInput = document.getElementById('cost');
+            const incomeInput = document.getElementById('income');
+            const costError = document.getElementById('cost-error');
+            const incomeError = document.getElementById('income-error');
+            const resultDiv = document.getElementById('result');
+            const deathWarningDiv = document.getElementById('death-warning');
+            const timeUnitsDiv = document.getElementById('time-units');
+            const copyResultBtn = document.getElementById('copy-result-btn');
+            const copyError = document.getElementById('copy-error');
+            
+            const costSuffixBtn = document.getElementById('cost-suffix-btn');
+            const costSuffixValue = document.getElementById('cost-suffix-value');
+            const costSuffixMenu = document.getElementById('cost-suffix-menu');
+            const costSuffixItems = costSuffixMenu.querySelectorAll('.menu-item');
+            
+            const incomeSuffixBtn = document.getElementById('income-suffix-btn');
+            const incomeSuffixValue = document.getElementById('income-suffix-value');
+            const incomeSuffixMenu = document.getElementById('income-suffix-menu');
+            const incomeSuffixItems = incomeSuffixMenu.querySelectorAll('.menu-item');
+            
+            const friendsBtn = document.getElementById('friends-btn');
+            const friendsValue = document.getElementById('friends-value');
+            const friendsMenu = document.getElementById('friends-menu');
+            const friendsItems = friendsMenu.querySelectorAll('.menu-item');
+            
+            const rebirthBtn = document.getElementById('rebirth-btn');
+            const rebirthValue = document.getElementById('rebirth-value');
+            const rebirthMenu = document.getElementById('rebirth-menu');
+            const rebirthItems = rebirthMenu.querySelectorAll('.menu-item');
+            
+            const historyBtn = document.getElementById('history-btn');
+            const historyPanel = document.getElementById('history-panel');
+            const historyItems = document.getElementById('history-items');
+            const historyEmpty = document.getElementById('history-empty');
+            const clearHistoryBtn = document.getElementById('clear-history-btn');
+            
+            const profileBtn = document.getElementById('profile-btn');
+            const profilePanel = document.getElementById('profile-panel');
+            const usernameInput = document.getElementById('username-input');
+            const akaInput = document.getElementById('aka-input');
+            const genderBtns = document.querySelectorAll('.gender-btn');
+            const profileSaved = document.getElementById('profile-saved');
+            const languageBtns = document.querySelectorAll('.language-btn');
+            
+            const clearProgressBtn = document.getElementById('clear-progress-btn');
+            
+            // Мобильное меню элементы
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuHeader = document.getElementById('mobile-menu-header');
+            const mobileMenuTitle = document.getElementById('mobile-menu-title');
+            const mobileMenuItems = document.getElementById('mobile-menu-items');
+            
+            let selectedCostSuffix = '';
+            let selectedCostSuffixMultiplier = 1;
+            let selectedIncomeSuffix = '';
+            let selectedIncomeSuffixMultiplier = 1;
+            let selectedFriendsValue = 1.5;
+            let selectedRebirthValue = 1;
+            
+            // Текущий тип меню для мобильного меню
+            let currentMobileMenuType = null;
+            
+            const translations = {
+                ru: {
+                    "profile": "Профиль",
+                    "username": "Имя пользователя",
+                    "usernameHint": "Английские буквы, цифры и _ (от 3 до 16 символов)",
+                    "aka": "a.k.a.",
+                    "akaHint": "Второе имя, не должно совпадать с первым",
+                    "gender": "Ваш пол",
+                    "male": "Мужской",
+                    "female": "Женский",
+                    "language": "Язык",
+                    "clearProgress": "Очистить прогресс",
+                    "dataSaved": "Данные сохранены!",
+                    "brainrotCost": "Стоимость Brainrot",
+                    "incomePerSecond": "Доход в секунду",
+                    "rebirthBoost": "Буст от перерождений",
+                    "friendsBoost": "Буст от друзей",
+                    "choose": "Выбрать",
+                    "calculate": "Рассчитать",
+                    "noSuffix": "Без суффикса",
+                    "chooseCostSuffix": "Выберите суффикс стоимости",
+                    "chooseIncomeSuffix": "Выберите суффикс дохода",
+                    "chooseMultiplier": "Выберите множитель",
+                    "choosePercentage": "Выберите процент",
+                    "calculationResult": "Результат расчета:",
+                    "enterValues": "Введите значения и нажмите \"Рассчитать\"",
+                    "copyResult": "Скопировать результат",
+                    "copied": "Скопировано",
+                    "calculationHistory": "История расчетов",
+                    "clear": "Очистить",
+                    "historyEmpty": "История расчетов пуста",
+                    "informationSources": "Источники информации",
+                    "description": "Калькулятор для расчета эффективности вашего Brainrot. Введите значения в поля ниже и нажмите кнопку \"Рассчитать\"."
+                },
+                en: {
+                    "profile": "Profile",
+                    "username": "Username",
+                    "usernameHint": "English letters, numbers and _ (3 to 16 characters)",
+                    "aka": "a.k.a.",
+                    "akaHint": "Second name, must not match the first",
+                    "gender": "Your gender",
+                    "male": "Male",
+                    "female": "Female",
+                    "language": "Language",
+                    "clearProgress": "Clear progress",
+                    "dataSaved": "Data saved!",
+                    "brainrotCost": "Brainrot Cost",
+                    "incomePerSecond": "Income per second",
+                    "rebirthBoost": "Rebirth boost",
+                    "friendsBoost": "Friends boost",
+                    "choose": "Choose",
+                    "calculate": "Calculate",
+                    "noSuffix": "No suffix",
+                    "chooseCostSuffix": "Choose cost suffix",
+                    "chooseIncomeSuffix": "Choose income suffix",
+                    "chooseMultiplier": "Choose multiplier",
+                    "choosePercentage": "Choose percentage",
+                    "calculationResult": "Calculation result:",
+                    "enterValues": "Enter values and press \"Calculate\"",
+                    "copyResult": "Copy result",
+                    "copied": "Copied",
+                    "calculationHistory": "Calculation history",
+                    "clear": "Clear",
+                    "historyEmpty": "Calculation history is empty",
+                    "informationSources": "Information sources",
+                    "description": "Calculator for calculating the efficiency of your Brainrot. Enter values in the fields below and press the \"Calculate\" button."
+                },
+                uk: {
+                    "profile": "Профіль",
+                    "username": "Ім'я користувача",
+                    "usernameHint": "Англійські літери, цифри та _ (від 3 до 16 символів)",
+                    "aka": "a.k.a.",
+                    "akaHint": "Друге ім'я, не повинно збігатися з першим",
+                    "gender": "Ваша стать",
+                    "male": "Чоловіча",
+                    "female": "Жіноча",
+                    "language": "Мова",
+                    "clearProgress": "Очистити прогрес",
+                    "dataSaved": "Дані збережено!",
+                    "brainrotCost": "Вартість Brainrot",
+                    "incomePerSecond": "Дохід в секунду",
+                    "rebirthBoost": "Буст від перероджень",
+                    "friendsBoost": "Буст від друзів",
+                    "choose": "Вибрати",
+                    "calculate": "Розрахувати",
+                    "noSuffix": "Без суфікса",
+                    "chooseCostSuffix": "Виберіть суфікс вартості",
+                    "chooseIncomeSuffix": "Виберіть суфікс доходу",
+                    "chooseMultiplier": "Виберіть множник",
+                    "choosePercentage": "Виберіть відсоток",
+                    "calculationResult": "Результат розрахунку:",
+                    "enterValues": "Введіть значення та натисніть \"Розрахувати\"",
+                    "copyResult": "Скопіювати результат",
+                    "copied": "Скопійовано",
+                    "calculationHistory": "Історія розрахунків",
+                    "clear": "Очистити",
+                    "historyEmpty": "Історія розрахунків порожня",
+                    "informationSources": "Джерела інформації",
+                    "description": "Калькулятор для розрахунку ефективності вашого Brainrot. Введіть значення в поля нижче та натисніть кнопку \"Розрахувати\"."
+                },
+                hi: {
+                    "profile": "प्रोफ़ाइल",
+                    "username": "उपयोगकर्ता नाम",
+                    "usernameHint": "अंग्रेजी अक्षर, संख्याएँ और _ (3 से 16 वर्ण)",
+                    "aka": "a.k.a.",
+                    "akaHint": "दूसरा नाम, पहले से मेल नहीं खाना चाहिए",
+                    "gender": "आपका लिंग",
+                    "male": "पुरुष",
+                    "female": "महिला",
+                    "language": "भाषा",
+                    "clearProgress": "प्रगति साफ़ करें",
+                    "dataSaved": "डेटा सहेजा गया!",
+                    "brainrotCost": "Brainrot की लागत",
+                    "incomePerSecond": "प्रति सेकंड आय",
+                    "rebirthBoost": "पुनर्जन्म बूस्ट",
+                    "friendsBoost": "दोस्तों का बूस्ट",
+                    "choose": "चुनें",
+                    "calculate": "गणना करें",
+                    "noSuffix": "बिना प्रत्यय",
+                    "chooseCostSuffix": "लागत प्रत्यय चुनें",
+                    "chooseIncomeSuffix": "आय प्रत्यय चुनें",
+                    "chooseMultiplier": "गुणक चुनें",
+                    "choosePercentage": "प्रतिशत चुनें",
+                    "calculationResult": "गणना परिणाम:",
+                    "enterValues": "मान दर्ज करें और \"गणना करें\" दबाएं",
+                    "copyResult": "परिणाम कॉपी करें",
+                    "copied": "कॉपी किया गया",
+                    "calculationHistory": "गणना इतिहास",
+                    "clear": "साफ़ करें",
+                    "historyEmpty": "गणना इतिहास खाली है",
+                    "informationSources": "सूचना स्रोत",
+                    "description": "आपके Brainrot की दक्षता की गणना के लिए कैलकुलेटर। नीचे दिए गए फ़ील्ड में मान दर्ज करें और \"गणना करें\" बटन दबाएं।"
+                }
+            };
+            
+            let userData = {
+                username: '',
+                aka: '',
+                gender: null,
+                language: 'ru'
+            };
+            
+            let currentResult = '';
+            
+            const TIME_CONSTANTS = {
+                millisecondsPerSecond: 1000,
+                secondsPerMinute: 60,
+                minutesPerHour: 60,
+                hoursPerDay: 24,
+                daysPerWeek: 7,
+                daysPerMonth: 30.436875,
+                daysPerYear: 365.2425,
+                yearsPerCentury: 100,
+                yearsPerMillennium: 1000
+            };
+            
+            const DEATH_WARNING_THRESHOLD = {
+                years: 122,
+                days: 164
+            };
+            
+            const DEATH_WARNING_THRESHOLD_DAYS = DEATH_WARNING_THRESHOLD.years * TIME_CONSTANTS.daysPerYear + DEATH_WARNING_THRESHOLD.days;
+            
+            let activePanel = null;
+            
+            let calculationHistory = JSON.parse(localStorage.getItem('brainrot-history')) || [];
+            const MAX_HISTORY_ITEMS = 15;
+            
+            function translate(key, lang = null) {
+                const currentLang = lang || userData.language;
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    return translations[currentLang][key];
+                }
+                return translations['ru'][key] || key;
+            }
+            
+            function applyTranslations(lang = null) {
+                const currentLang = lang || userData.language;
+                const elements = document.querySelectorAll('[data-i18n]');
+                
+                elements.forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    const translation = translate(key, currentLang);
+                    if (element.tagName === 'INPUT') {
+                        element.placeholder = translation;
+                    } else {
+                        element.textContent = translation;
+                    }
+                });
+                
+                updateHistoryDisplay();
+            }
+            
+            function changeLanguage(lang) {
+                userData.language = lang;
+                
+                languageBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-lang') === lang) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                applyTranslations(lang);
+                saveUserData();
+            }
+            
+            function loadUserData() {
+                const savedUserData = localStorage.getItem('brainrot-user-data');
+                if (savedUserData) {
+                    const parsedData = JSON.parse(savedUserData);
+                    userData = {
+                        ...userData,
+                        ...parsedData
+                    };
+                    
+                    if (userData.username) usernameInput.value = userData.username;
+                    if (userData.aka) akaInput.value = userData.aka;
+                    
+                    if (userData.gender) {
+                        genderBtns.forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.getAttribute('data-gender') === userData.gender) {
+                                btn.classList.add('active');
+                            }
+                        });
+                    }
+                    
+                    if (userData.language) {
+                        languageBtns.forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.getAttribute('data-lang') === userData.language) {
+                                btn.classList.add('active');
+                            }
+                        });
+                        applyTranslations(userData.language);
+                    }
+                }
+            }
+            
+            function saveUserData() {
+                if (userData.username && userData.aka && userData.username === userData.aka) {
+                    akaInput.style.borderColor = 'var(--error-color)';
+                } else {
+                    akaInput.style.borderColor = '';
+                }
+                
+                localStorage.setItem('brainrot-user-data', JSON.stringify(userData));
+                profileSaved.classList.add('show');
+                setTimeout(() => profileSaved.classList.remove('show'), 2000);
+            }
+            
+            function validateUsername(username) {
+                if (username.length < 3 || username.length > 16) return false;
+                const regex = /^[a-zA-Z0-9_]+$/;
+                return regex.test(username);
+            }
+            
+            function saveHistory() {
+                localStorage.setItem('brainrot-history', JSON.stringify(calculationHistory));
+                updateHistoryDisplay();
+            }
+            
+            function updateHistoryDisplay() {
+                historyItems.innerHTML = '';
+                
+                if (calculationHistory.length === 0) {
+                    historyEmpty.style.display = 'block';
+                    return;
+                }
+                
+                historyEmpty.style.display = 'none';
+                const recentHistory = calculationHistory.slice(-MAX_HISTORY_ITEMS).reverse();
+                
+                recentHistory.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.dataset.index = calculationHistory.length - 1 - index;
+                    
+                    const date = new Date(item.timestamp);
+                    const dateStr = date.toLocaleDateString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const params = item.params;
+                    
+                    historyItem.innerHTML = `
+                        <div class="history-item-date">
+                            <span>${dateStr}</span>
+                            <span>#${calculationHistory.length - index}</span>
+                        </div>
+                        <div class="history-item-result">${item.result.formatted}</div>
+                        <div class="history-item-params">
+                            <div>${translate('brainrotCost')}: ${params.cost}${params.costSuffix}</div>
+                            <div>${translate('incomePerSecond')}: ${params.income}${params.incomeSuffix}/сек</div>
+                            <div>${translate('rebirthBoost')}: x${params.rebirth}</div>
+                            <div>${translate('friendsBoost')}: ${Math.round((params.friends - 1) * 100)}%</div>
+                        </div>
+                    `;
+                    
+                    historyItem.addEventListener('click', function() {
+                        loadCalculationFromHistory(item);
+                        closeAllPanels();
+                    });
+                    
+                    historyItems.appendChild(historyItem);
+                });
+            }
+            
+            function loadCalculationFromHistory(historyItem) {
+                const params = historyItem.params;
+                
+                costInput.value = params.cost;
+                incomeInput.value = params.income;
+                
+                selectedCostSuffix = params.costSuffix;
+                selectedCostSuffixMultiplier = params.costSuffix === 'k' ? 1000 : 
+                                              params.costSuffix === 'm' ? 1000000 : 
+                                              params.costSuffix === 'b' ? 1000000000 : 
+                                              params.costSuffix === 'qa' ? 1000000000000 : 1;
+                
+                costSuffixValue.textContent = params.costSuffix === '' ? translate('noSuffix') : params.costSuffix;
+                
+                costSuffixItems.forEach(item => {
+                    item.classList.remove('selected');
+                    if (item.getAttribute('data-suffix') === params.costSuffix) {
+                        item.classList.add('selected');
+                    }
+                });
+                
+                selectedIncomeSuffix = params.incomeSuffix;
+                selectedIncomeSuffixMultiplier = params.incomeSuffix === 'k' ? 1000 : 
+                                                params.incomeSuffix === 'm' ? 1000000 : 
+                                                params.incomeSuffix === 'b' ? 1000000000 : 
+                                                params.incomeSuffix === 'qa' ? 1000000000000 : 1;
+                
+                incomeSuffixValue.textContent = params.incomeSuffix === '' ? translate('noSuffix') : params.incomeSuffix;
+                
+                incomeSuffixItems.forEach(item => {
+                    item.classList.remove('selected');
+                    if (item.getAttribute('data-suffix') === params.incomeSuffix) {
+                        item.classList.add('selected');
+                    }
+                });
+                
+                selectedRebirthValue = params.rebirth;
+                rebirthValue.textContent = `x${params.rebirth}`;
+                
+                rebirthItems.forEach(item => {
+                    item.classList.remove('selected');
+                    if (parseFloat(item.getAttribute('data-value')) === params.rebirth) {
+                        item.classList.add('selected');
+                    }
+                });
+                
+                selectedFriendsValue = params.friends;
+                const percentValue = Math.round((params.friends - 1) * 100);
+                friendsValue.textContent = `${percentValue}%`;
+                
+                friendsItems.forEach(item => {
+                    item.classList.remove('selected');
+                    if (parseFloat(item.getAttribute('data-value')) === params.friends) {
+                        item.classList.add('selected');
+                    }
+                });
+                
+                resultDiv.innerHTML = historyItem.result.formatted;
+                currentResult = historyItem.result.formatted;
+                
+                if (historyItem.result.timeUnits) {
+                    timeUnitsDiv.innerHTML = historyItem.result.timeUnits;
+                    timeUnitsDiv.style.display = "flex";
+                } else {
+                    timeUnitsDiv.style.display = "none";
+                }
+                
+                if (historyItem.result.showDeathWarning) {
+                    deathWarningDiv.textContent = "⚠️ Скорее всего вы умрете, когда Brainrot окупит себя! ⚠️";
+                    deathWarningDiv.style.display = "block";
+                } else {
+                    deathWarningDiv.style.display = "none";
+                }
+                
+                copyResultBtn.style.display = "flex";
+                resultDiv.style.transform = "scale(1.05)";
+                setTimeout(() => resultDiv.style.transform = "scale(1)", 300);
+            }
+            
+            function addToHistory(params, result) {
+                const historyItem = {
+                    timestamp: new Date().toISOString(),
+                    params: {
+                        cost: params.cost,
+                        costSuffix: params.costSuffix,
+                        income: params.income,
+                        incomeSuffix: params.incomeSuffix,
+                        rebirth: params.rebirth,
+                        friends: params.friends
+                    },
+                    result: {
+                        formatted: result.formatted,
+                        timeUnits: result.timeUnits,
+                        showDeathWarning: result.showDeathWarning,
+                        totalDays: result.totalDays
+                    }
+                };
+                
+                calculationHistory.push(historyItem);
+                if (calculationHistory.length > 50) calculationHistory = calculationHistory.slice(-50);
+                saveHistory();
+            }
+            
+            function clearHistory() {
+                if (confirm("Вы уверены, что хотите очистить историю расчетов?")) {
+                    calculationHistory = [];
+                    saveHistory();
+                }
+            }
+            
+            function clearProgress() {
+                if (confirm("Вы уверены, что хотите очистить весь прогресс? Это действие нельзя отменить! Все ваши данные будут удалены.")) {
+                    userData = {
+                        username: '',
+                        aka: '',
+                        gender: null,
+                        language: 'ru'
+                    };
+                    
+                    usernameInput.value = '';
+                    akaInput.value = '';
+                    
+                    genderBtns.forEach(btn => btn.classList.remove('active'));
+                    
+                    languageBtns.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.getAttribute('data-lang') === 'ru') {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    applyTranslations('ru');
+                    
+                    saveUserData();
+                    
+                    alert("Все данные успешно очищены!");
+                }
+            }
+            
+            function copyResult() {
+                if (!userData.gender) {
+                    copyResultBtn.classList.add('error');
+                    copyError.textContent = "Выберите ваш пол в профиле";
+                    setTimeout(() => {
+                        copyResultBtn.classList.remove('error');
+                        copyError.textContent = "";
+                    }, 2000);
+                    return;
+                }
+                
+                const genderText = userData.gender === 'male' ? 
+                    (userData.language === 'ru' ? 'рассчитал' : 
+                     userData.language === 'en' ? 'calculated' :
+                     userData.language === 'uk' ? 'розрахував' : 'गणना की') : 
+                    (userData.language === 'ru' ? 'рассчитала' : 
+                     userData.language === 'en' ? 'calculated' :
+                     userData.language === 'uk' ? 'розрахувала' : 'गणना की');
+                
+                const genderText2 = userData.gender === 'male' ? 
+                    (userData.language === 'ru' ? 'сделал' : 
+                     userData.language === 'en' ? 'did' :
+                     userData.language === 'uk' ? 'зробив' : 'किया') : 
+                    (userData.language === 'ru' ? 'сделала' : 
+                     userData.language === 'en' ? 'did' :
+                     userData.language === 'uk' ? 'зробила' : 'किया');
+                
+                const genderSuffix = userData.gender === 'female' && userData.language === 'ru' ? 'а' : '';
+                
+                const textToCopy = `я ${genderText} стоимость моего Brainrot и выяснил${genderSuffix}, что он окупится за ${currentResult}
+
+я ${genderText2} это на сайте "Calculation Brainrot"
+
+zombaklizard.github.io/Calculation_Brainrot/brainrot.html`;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyResultBtn.classList.add('success');
+                    copyResultBtn.innerHTML = `<i class="fas fa-check"></i> ${translate('copied')}`;
+                    setTimeout(() => {
+                        copyResultBtn.classList.remove('success');
+                        copyResultBtn.innerHTML = `<i class="fas fa-copy"></i> ${translate('copyResult')}`;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                    copyError.textContent = "Ошибка копирования. Попробуйте снова.";
+                });
+            }
+            
+            function validateNumberInput(input, e) {
+                const value = input.value;
+                const key = e.key;
+                
+                if (e.ctrlKey || e.altKey || e.metaKey || 
+                    key === 'Backspace' || key === 'Delete' || 
+                    key === 'Tab' || key === 'Enter' || 
+                    key === 'ArrowLeft' || key === 'ArrowRight' || 
+                    key === 'ArrowUp' || key === 'ArrowDown' ||
+                    key === 'Home' || key === 'End') return true;
+                
+                if (key >= '0' && key <= '9') return true;
+                
+                if (key === '.' || key === ',') {
+                    e.preventDefault();
+                    if (!value.includes('.')) {
+                        const start = input.selectionStart;
+                        const end = input.selectionEnd;
+                        input.value = value.substring(0, start) + '.' + value.substring(end);
+                        input.setSelectionRange(start + 1, start + 1);
+                    }
+                    return false;
+                }
+                
+                e.preventDefault();
+                return false;
+            }
+            
+            function validateFullInput(input, errorElement) {
+                const value = input.value.trim();
+                errorElement.textContent = "";
+                
+                if (!value) {
+                    errorElement.textContent = "Пожалуйста, введите значение";
+                    return { isValid: false, value: 0 };
+                }
+                
+                const regex = /^[0-9]+(?:\.[0-9]+)?$/;
+                if (!regex.test(value)) {
+                    errorElement.textContent = "Некорректный формат. Примеры: 875, 1.5, 15";
+                    return { isValid: false, value: 0 };
+                }
+                
+                const numericValue = parseFloat(value);
+                if (isNaN(numericValue)) {
+                    errorElement.textContent = "Введите корректное число";
+                    return { isValid: false, value: 0 };
+                }
+                
+                if (numericValue < 0) {
+                    errorElement.textContent = "Число не может быть отрицательным";
+                    return { isValid: false, value: 0 };
+                }
+                
+                return { isValid: true, value: numericValue };
+            }
+            
+            function formatExtendedTime(seconds) {
+                let remainingSeconds = seconds;
+                
+                const secondsInMillennium = TIME_CONSTANTS.daysPerYear * TIME_CONSTANTS.yearsPerMillennium * 24 * 3600;
+                const millennia = Math.floor(remainingSeconds / secondsInMillennium);
+                remainingSeconds %= secondsInMillennium;
+                
+                const secondsInCentury = TIME_CONSTANTS.daysPerYear * TIME_CONSTANTS.yearsPerCentury * 24 * 3600;
+                const centuries = Math.floor(remainingSeconds / secondsInCentury);
+                remainingSeconds %= secondsInCentury;
+                
+                const secondsInYear = TIME_CONSTANTS.daysPerYear * 24 * 3600;
+                const years = Math.floor(remainingSeconds / secondsInYear);
+                remainingSeconds %= secondsInYear;
+                
+                const secondsInMonth = TIME_CONSTANTS.daysPerMonth * 24 * 3600;
+                const months = Math.floor(remainingSeconds / secondsInMonth);
+                remainingSeconds %= secondsInMonth;
+                
+                const secondsInWeek = TIME_CONSTANTS.daysPerWeek * 24 * 3600;
+                const weeks = Math.floor(remainingSeconds / secondsInWeek);
+                remainingSeconds %= secondsInWeek;
+                
+                const secondsInDay = 24 * 3600;
+                const days = Math.floor(remainingSeconds / secondsInDay);
+                remainingSeconds %= secondsInDay;
+                
+                const secondsInHour = 3600;
+                const hours = Math.floor(remainingSeconds / secondsInHour);
+                remainingSeconds %= secondsInHour;
+                
+                const secondsInMinute = 60;
+                const minutes = Math.floor(remainingSeconds / secondsInMinute);
+                remainingSeconds %= secondsInMinute;
+                
+                const secs = Math.floor(remainingSeconds);
+                const ms = Math.round((remainingSeconds - secs) * 1000);
+                
+                let formattedResult = '';
+                const units = [
+                    { value: millennia, label: 'тыс', fullLabel: 'тысячелетий' },
+                    { value: centuries, label: 'в', fullLabel: 'веков' },
+                    { value: years, label: 'г', fullLabel: 'лет' },
+                    { value: months, label: 'мес', fullLabel: 'месяцев' },
+                    { value: weeks, label: 'нед', fullLabel: 'недель' },
+                    { value: days, label: 'д', fullLabel: 'дней' },
+                    { value: hours, label: 'ч', fullLabel: 'часов' },
+                    { value: minutes, label: 'мин', fullLabel: 'минут' },
+                    { value: secs, label: 'сек', fullLabel: 'секунд' }
+                ];
+                
+                let firstNonZeroIndex = -1;
+                for (let i = 0; i < units.length; i++) {
+                    if (units[i].value > 0) {
+                        firstNonZeroIndex = i;
+                        break;
+                    }
+                }
+                
+                if (firstNonZeroIndex === -1) {
+                    formattedResult = `${ms} мс`;
+                } else {
+                    formattedResult = `${units[firstNonZeroIndex].value} ${units[firstNonZeroIndex].label}`;
+                    
+                    for (let i = firstNonZeroIndex + 1; i < units.length; i++) {
+                        if (units[i].value > 0) {
+                            formattedResult += ` ${units[i].value} ${units[i].label}`;
+                            break;
+                        }
+                    }
+                }
+                
+                let timeUnitsHTML = '';
+                units.forEach(unit => {
+                    if (unit.value > 0) {
+                        timeUnitsHTML += `
+                            <div class="time-unit">
+                                <span class="value">${unit.value}</span>
+                                <span class="label">${unit.fullLabel}</span>
+                            </div>`;
+                    }
+                });
+                
+                if (seconds < 1 && ms > 0) {
+                    timeUnitsHTML += `
+                        <div class="time-unit">
+                            <span class="value">${ms}</span>
+                            <span class="label">миллисекунд</span>
+                        </div>`;
+                }
+                
+                const totalDays = seconds / (TIME_CONSTANTS.secondsPerMinute * TIME_CONSTANTS.minutesPerHour * TIME_CONSTANTS.hoursPerDay);
+                let showDeathWarning = totalDays >= DEATH_WARNING_THRESHOLD_DAYS;
+                
+                return {
+                    formatted: formattedResult,
+                    timeUnits: timeUnitsHTML,
+                    showDeathWarning: showDeathWarning,
+                    totalDays: totalDays,
+                    seconds: seconds
+                };
+            }
+            
+            function calculateBrainrot() {
+                costError.textContent = "";
+                incomeError.textContent = "";
+                resultDiv.style.color = "var(--primary-color)";
+                deathWarningDiv.style.display = "none";
+                timeUnitsDiv.style.display = "none";
+                copyError.textContent = "";
+                
+                const costValidation = validateFullInput(costInput, costError);
+                const incomeValidation = validateFullInput(incomeInput, incomeError);
+                
+                if (!costValidation.isValid || !incomeValidation.isValid) {
+                    resultDiv.textContent = "Исправьте ошибки в полях ввода";
+                    resultDiv.style.color = "var(--error-color)";
+                    copyResultBtn.style.display = "none";
+                    return;
+                }
+                
+                const a = costValidation.value * selectedCostSuffixMultiplier;
+                const b = incomeValidation.value * selectedIncomeSuffixMultiplier;
+                const c = selectedRebirthValue;
+                const d = selectedFriendsValue;
+                
+                if (a < 0 || b < 0 || c < 0 || d < 0) {
+                    resultDiv.textContent = "Ошибка: значения не могут быть отрицательными";
+                    resultDiv.style.color = "var(--error-color)";
+                    copyResultBtn.style.display = "none";
+                    return;
+                }
+                
+                if (b === 0 || c === 0) {
+                    resultDiv.textContent = "Ошибка: доход и буст перерождений не могут быть равны нулю";
+                    resultDiv.style.color = "var(--error-color)";
+                    copyResultBtn.style.display = "none";
+                    return;
+                }
+                
+                let denominator = b * c * d;
+                
+                if (denominator === 0) {
+                    resultDiv.textContent = "Ошибка: знаменатель равен нулю";
+                    resultDiv.style.color = "var(--error-color)";
+                    copyResultBtn.style.display = "none";
+                    return;
+                }
+                
+                const result = a / denominator;
+                
+                if (!isFinite(result) || isNaN(result)) {
+                    resultDiv.textContent = "Ошибка: результат слишком большой или недопустимый";
+                    resultDiv.style.color = "var(--error-color)";
+                    copyResultBtn.style.display = "none";
+                    return;
+                }
+                
+                const formattedResult = formatExtendedTime(result);
+                resultDiv.style.color = "var(--primary-color)";
+                resultDiv.style.transform = "scale(1.05)";
+                resultDiv.innerHTML = formattedResult.formatted;
+                currentResult = formattedResult.formatted;
+                
+                if (result > 1 && formattedResult.timeUnits) {
+                    timeUnitsDiv.innerHTML = formattedResult.timeUnits;
+                    timeUnitsDiv.style.display = "flex";
+                }
+                
+                if (formattedResult.showDeathWarning) {
+                    deathWarningDiv.textContent = "⚠️ Скорее всего вы умрете, когда Brainrot окупит себя! ⚠️";
+                    deathWarningDiv.style.display = "block";
+                }
+                
+                copyResultBtn.style.display = "flex";
+                
+                const historyParams = {
+                    cost: costValidation.value,
+                    costSuffix: selectedCostSuffix,
+                    income: incomeValidation.value,
+                    incomeSuffix: selectedIncomeSuffix,
+                    rebirth: selectedRebirthValue,
+                    friends: selectedFriendsValue
+                };
+                
+                addToHistory(historyParams, formattedResult);
+                setTimeout(() => resultDiv.style.transform = "scale(1)", 300);
+            }
+            
+            function openMenu(menu) {
+                if (activePanel && activePanel !== menu) activePanel.classList.remove('active');
+                if (activePanel === menu) {
+                    menu.classList.remove('active');
+                    activePanel = null;
+                } else {
+                    menu.classList.add('active');
+                    activePanel = menu;
+                }
+            }
+            
+            function toggleHistoryPanel() {
+                closeAllPanelsExcept('history-panel');
+                if (historyPanel.classList.contains('active')) {
+                    historyPanel.classList.remove('active');
+                    activePanel = null;
+                } else {
+                    historyPanel.classList.add('active');
+                    activePanel = historyPanel;
+                    updateHistoryDisplay();
+                }
+            }
+            
+            function toggleProfilePanel() {
+                closeAllPanelsExcept('profile-panel');
+                if (profilePanel.classList.contains('active')) {
+                    profilePanel.classList.remove('active');
+                    activePanel = null;
+                } else {
+                    profilePanel.classList.add('active');
+                    activePanel = profilePanel;
+                }
+            }
+            
+            function closeAllPanelsExcept(exceptClass) {
+                const panels = document.querySelectorAll('.vertical-menu, .history-panel, .profile-panel, .mobile-menu-overlay, .mobile-menu');
+                panels.forEach(panel => {
+                    if (!panel.classList.contains(exceptClass)) {
+                        panel.classList.remove('active');
+                    }
+                });
+            }
+            
+            function closeAllPanels() {
+                const panels = document.querySelectorAll('.vertical-menu, .history-panel, .profile-panel, .mobile-menu-overlay, .mobile-menu');
+                panels.forEach(panel => panel.classList.remove('active'));
+                activePanel = null;
+                currentMobileMenuType = null;
+            }
+            
+            // Функции для мобильного меню
+            function openMobileMenu(menuType, title, items, currentValue) {
+                currentMobileMenuType = menuType;
+                mobileMenuTitle.textContent = title;
+                mobileMenuItems.innerHTML = '';
+                
+                items.forEach(item => {
+                    const menuItem = document.createElement('div');
+                    menuItem.className = 'mobile-menu-item';
+                    
+                    if (menuType === 'cost-suffix' || menuType === 'income-suffix') {
+                        const suffix = item.getAttribute('data-suffix');
+                        const isSelected = (menuType === 'cost-suffix' && suffix === selectedCostSuffix) || 
+                                          (menuType === 'income-suffix' && suffix === selectedIncomeSuffix);
+                        menuItem.innerHTML = item.innerHTML;
+                        menuItem.dataset.suffix = suffix;
+                        menuItem.dataset.multiplier = item.getAttribute('data-multiplier');
+                        if (isSelected) menuItem.classList.add('selected');
+                        
+                        menuItem.addEventListener('click', function() {
+                            const suffix = this.dataset.suffix;
+                            const multiplier = parseFloat(this.dataset.multiplier);
+                            
+                            if (menuType === 'cost-suffix') {
+                                selectedCostSuffix = suffix;
+                                selectedCostSuffixMultiplier = multiplier;
+                                costSuffixValue.textContent = suffix === '' ? translate('noSuffix') : suffix;
+                                
+                                costSuffixItems.forEach(i => i.classList.remove('selected'));
+                                item.classList.add('selected');
+                            } else {
+                                selectedIncomeSuffix = suffix;
+                                selectedIncomeSuffixMultiplier = multiplier;
+                                incomeSuffixValue.textContent = suffix === '' ? translate('noSuffix') : suffix;
+                                
+                                incomeSuffixItems.forEach(i => i.classList.remove('selected'));
+                                item.classList.add('selected');
+                            }
+                            
+                            closeAllPanels();
+                        });
+                    } else if (menuType === 'friends') {
+                        const value = parseFloat(item.getAttribute('data-value'));
+                        const isSelected = value === selectedFriendsValue;
+                        menuItem.innerHTML = item.innerHTML;
+                        menuItem.dataset.value = value;
+                        if (isSelected) menuItem.classList.add('selected');
+                        
+                        menuItem.addEventListener('click', function() {
+                            const value = parseFloat(this.dataset.value);
+                            selectedFriendsValue = value;
+                            const percentValue = Math.round((value - 1) * 100);
+                            friendsValue.textContent = `${percentValue}%`;
+                            
+                            friendsItems.forEach(i => i.classList.remove('selected'));
+                            item.classList.add('selected');
+                            
+                            closeAllPanels();
+                        });
+                    } else if (menuType === 'rebirth') {
+                        const value = parseFloat(item.getAttribute('data-value'));
+                        const isSelected = value === selectedRebirthValue;
+                        menuItem.innerHTML = item.innerHTML;
+                        menuItem.dataset.value = value;
+                        if (isSelected) menuItem.classList.add('selected');
+                        
+                        menuItem.addEventListener('click', function() {
+                            const value = parseFloat(this.dataset.value);
+                            selectedRebirthValue = value;
+                            rebirthValue.textContent = `x${value}`;
+                            
+                            rebirthItems.forEach(i => i.classList.remove('selected'));
+                            item.classList.add('selected');
+                            
+                            closeAllPanels();
+                        });
+                    }
+                    
+                    mobileMenuItems.appendChild(menuItem);
+                });
+                
+                mobileMenuOverlay.classList.add('active');
+                mobileMenu.classList.add('active');
+            }
+            
+            function initEventListeners() {
+                // Обработчики для кнопок меню (для десктопа и мобильных)
+                costSuffixBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth <= 1024) {
+                        // Мобильное меню
+                        openMobileMenu('cost-suffix', translate('chooseCostSuffix'), Array.from(costSuffixItems), selectedCostSuffix);
+                    } else {
+                        // Десктоп меню
+                        openMenu(costSuffixMenu);
+                    }
+                });
+                
+                incomeSuffixBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth <= 1024) {
+                        // Мобильное меню
+                        openMobileMenu('income-suffix', translate('chooseIncomeSuffix'), Array.from(incomeSuffixItems), selectedIncomeSuffix);
+                    } else {
+                        // Десктоп меню
+                        openMenu(incomeSuffixMenu);
+                    }
+                });
+                
+                friendsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth <= 1024) {
+                        // Мобильное меню
+                        openMobileMenu('friends', translate('choosePercentage'), Array.from(friendsItems), selectedFriendsValue);
+                    } else {
+                        // Десктоп меню
+                        openMenu(friendsMenu);
+                    }
+                });
+                
+                rebirthBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth <= 1024) {
+                        // Мобильное меню
+                        openMobileMenu('rebirth', translate('chooseMultiplier'), Array.from(rebirthItems), selectedRebirthValue);
+                    } else {
+                        // Десктоп меню
+                        openMenu(rebirthMenu);
+                    }
+                });
+                
+                // Обработчики для десктоп меню
+                costSuffixItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const suffix = this.getAttribute('data-suffix');
+                        const multiplier = parseFloat(this.getAttribute('data-multiplier'));
+                        
+                        selectedCostSuffix = suffix;
+                        selectedCostSuffixMultiplier = multiplier;
+                        costSuffixValue.textContent = suffix === '' ? translate('noSuffix') : suffix;
+                        
+                        costSuffixItems.forEach(i => i.classList.remove('selected'));
+                        this.classList.add('selected');
+                        closeAllPanels();
+                    });
+                });
+                
+                incomeSuffixItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const suffix = this.getAttribute('data-suffix');
+                        const multiplier = parseFloat(this.getAttribute('data-multiplier'));
+                        
+                        selectedIncomeSuffix = suffix;
+                        selectedIncomeSuffixMultiplier = multiplier;
+                        incomeSuffixValue.textContent = suffix === '' ? translate('noSuffix') : suffix;
+                        
+                        incomeSuffixItems.forEach(i => i.classList.remove('selected'));
+                        this.classList.add('selected');
+                        closeAllPanels();
+                    });
+                });
+                
+                friendsItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const value = parseFloat(this.getAttribute('data-value'));
+                        selectedFriendsValue = value;
+                        const percentValue = Math.round((value - 1) * 100);
+                        friendsValue.textContent = `${percentValue}%`;
+                        
+                        friendsItems.forEach(i => i.classList.remove('selected'));
+                        this.classList.add('selected');
+                        closeAllPanels();
+                    });
+                });
+                
+                rebirthItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const value = parseFloat(this.getAttribute('data-value'));
+                        selectedRebirthValue = value;
+                        rebirthValue.textContent = `x${value}`;
+                        
+                        rebirthItems.forEach(i => i.classList.remove('selected'));
+                        this.classList.add('selected');
+                        closeAllPanels();
+                    });
+                });
+                
+                // Обработчики для истории и профиля
+                historyBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleHistoryPanel();
+                });
+                
+                profileBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleProfilePanel();
+                });
+                
+                clearHistoryBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clearHistory();
+                });
+                
+                clearProgressBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clearProgress();
+                });
+                
+                copyResultBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    copyResult();
+                });
+                
+                languageBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const lang = this.getAttribute('data-lang');
+                        changeLanguage(lang);
+                    });
+                });
+                
+                genderBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const gender = this.getAttribute('data-gender');
+                        userData.gender = gender;
+                        genderBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        saveUserData();
+                    });
+                });
+                
+                usernameInput.addEventListener('input', function() {
+                    let value = this.value;
+                    let newValue = value.replace(/[^a-zA-Z0-9_]/g, '');
+                    if (newValue !== value) {
+                        this.value = newValue;
+                    }
+                    
+                    if (newValue.length > 16) {
+                        this.value = newValue.substring(0, 16);
+                        newValue = this.value;
+                    }
+                    
+                    userData.username = newValue;
+                    saveUserData();
+                });
+                
+                akaInput.addEventListener('input', function() {
+                    let value = this.value;
+                    let newValue = value.replace(/[^a-zA-Z0-9_]/g, '');
+                    if (newValue !== value) {
+                        this.value = newValue;
+                    }
+                    
+                    if (newValue.length > 16) {
+                        this.value = newValue.substring(0, 16);
+                        newValue = this.value;
+                    }
+                    
+                    userData.aka = newValue;
+                    saveUserData();
+                });
+                
+                usernameInput.addEventListener('blur', function() {
+                    const username = this.value.trim();
+                    if (username && !validateUsername(username)) {
+                        this.style.borderColor = 'var(--error-color)';
+                    } else {
+                        this.style.borderColor = '';
+                    }
+                });
+                
+                akaInput.addEventListener('blur', function() {
+                    const aka = this.value.trim();
+                    if (aka && userData.username === aka) {
+                        this.style.borderColor = 'var(--error-color)';
+                    } else {
+                        this.style.borderColor = '';
+                    }
+                });
+                
+                // Закрытие меню при клике вне
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.select-button') && 
+                        !e.target.closest('.cost-input-container') &&
+                        !e.target.closest('.income-input-container') &&
+                        !e.target.closest('.history-panel') &&
+                        !e.target.closest('.history-btn') &&
+                        !e.target.closest('.profile-panel') &&
+                        !e.target.closest('.profile-btn') &&
+                        !e.target.closest('.mobile-menu') &&
+                        !e.target.closest('.mobile-menu-overlay')) {
+                        closeAllPanels();
+                    }
+                });
+                
+                // Закрытие мобильного меню при клике на оверлей
+                mobileMenuOverlay.addEventListener('click', function() {
+                    closeAllPanels();
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeAllPanels();
+                    }
+                });
+                
+                calculateBtn.addEventListener('click', calculateBrainrot);
+                
+                const inputs = [costInput, incomeInput];
+                inputs.forEach(input => {
+                    input.addEventListener('keydown', function(e) {
+                        validateNumberInput(this, e);
+                    });
+                    
+                    input.addEventListener('paste', function(e) {
+                        e.preventDefault();
+                        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                        const cleanedText = pastedText.replace(/[^0-9.]/g, '');
+                        const start = this.selectionStart;
+                        const end = this.selectionEnd;
+                        this.value = this.value.substring(0, start) + cleanedText + this.value.substring(end);
+                        this.setSelectionRange(start + cleanedText.length, start + cleanedText.length);
+                        
+                        const errorElement = input.id === 'cost' ? costError : incomeError;
+                        validateFullInput(input, errorElement);
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        const errorElement = input.id === 'cost' ? costError : incomeError;
+                        validateFullInput(input, errorElement);
+                    });
+                    
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') calculateBrainrot();
+                    });
+                });
+                
+                // Обработка изменения размера окна
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 1024) {
+                        // Если перешли на десктоп, закрываем мобильное меню
+                        if (mobileMenu.classList.contains('active')) {
+                            closeAllPanels();
+                        }
+                    }
+                });
+            }
+            
+            function init() {
+                costSuffixItems.forEach(item => {
+                    if (item.getAttribute('data-suffix') === selectedCostSuffix) item.classList.add('selected');
+                });
+                
+                incomeSuffixItems.forEach(item => {
+                    if (item.getAttribute('data-suffix') === selectedIncomeSuffix) item.classList.add('selected');
+                });
+                
+                friendsItems.forEach(item => {
+                    if (parseFloat(item.getAttribute('data-value')) === selectedFriendsValue) item.classList.add('selected');
+                });
+                
+                rebirthItems.forEach(item => {
+                    if (parseFloat(item.getAttribute('data-value')) === selectedRebirthValue) item.classList.add('selected');
+                });
+                
+                loadUserData();
+                initEventListeners();
+                updateHistoryDisplay();
+            }
+            
+            init();
+        });
+    </script>
+</body>
+</html>
