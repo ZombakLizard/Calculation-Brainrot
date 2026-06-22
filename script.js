@@ -400,13 +400,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         updateHistoryDisplay();
         
-        // Обновляем тексты в death warning
         const deathWarningText = translate('deathWarning');
         if (deathWarningDiv.style.display === 'block') {
             deathWarningDiv.textContent = deathWarningText;
         }
         
-        // Обновляем placeholder
         costInput.placeholder = translate('invalidFormat');
         incomeInput.placeholder = translate('invalidFormat');
     }
