@@ -654,4 +654,747 @@ body::-webkit-scrollbar {
 }
 
 .copy-result-btn.error {
-    animation: shake 0.5s ease, blinkRed 1s ease
+    animation: shake 0.5s ease, blinkRed 1s ease;
+    background: linear-gradient(to right, var(--error-color), #ff3333);
+}
+
+.copy-result-btn.success {
+    background: linear-gradient(to right, #4CAF50, #45a049);
+    animation: pulseSuccess 1s ease;
+}
+
+.vertical-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 250px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--primary-color);
+    overflow-y: auto;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+.vertical-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.menu-header {
+    padding: 12px;
+    background-color: #333;
+    border-bottom: 2px solid var(--primary-color);
+    font-weight: bold;
+    color: var(--accent-color);
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 0.95rem;
+}
+
+.menu-items {
+    padding: 8px 0;
+}
+
+.menu-item {
+    padding: 10px 16px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #3a3a3a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.menu-item:hover {
+    background-color: var(--primary-color);
+    color: var(--button-text-color);
+    padding-left: 20px;
+}
+
+.menu-item.selected {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+    font-weight: bold;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+.suffix-info {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-left: 8px;
+}
+
+.result-container {
+    background-color: rgba(40, 40, 40, 0.8);
+    border-radius: 15px;
+    padding: 22px;
+    margin-top: 20px;
+    border-left: 5px solid var(--primary-color);
+    animation: fadeIn 1s ease-out 0.6s both;
+    position: relative;
+    z-index: 1;
+}
+
+.result-container h2 {
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.result-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    background-color: rgba(20, 20, 20, 0.7);
+    border-radius: 10px;
+    margin-top: 8px;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    flex-direction: column;
+}
+
+.death-warning {
+    color: var(--error-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 8px;
+    text-align: center;
+    padding: 8px;
+    background-color: rgba(255, 85, 85, 0.1);
+    border-radius: 8px;
+    border: 1px solid var(--error-color);
+    animation: pulseWarning 2s infinite;
+}
+
+.time-units {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+    padding: 8px;
+    background-color: rgba(30, 30, 30, 0.7);
+    border-radius: 8px;
+}
+
+.time-unit {
+    background-color: var(--time-unit-bg);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--time-unit-border);
+    font-size: 0.85rem;
+}
+
+.time-unit .value {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.time-unit .label {
+    color: var(--light-text);
+    margin-left: 4px;
+}
+
+.game-info {
+    background-color: rgba(40, 40, 40, 0.8);
+    border-radius: 15px;
+    padding: 22px;
+    margin-top: 25px;
+    border: 1px solid var(--primary-color);
+    animation: fadeIn 1s ease-out 1.2s both;
+    position: relative;
+    z-index: 1;
+}
+
+.game-info h3 {
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.game-info p {
+    color: var(--light-text);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.bypass-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bypass-link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+.sources-info {
+    background-color: rgba(40, 40, 40, 0.8);
+    border-radius: 15px;
+    padding: 22px;
+    margin-top: 25px;
+    border: 1px solid var(--primary-color);
+    position: relative;
+    z-index: 1;
+}
+
+.sources-info h3 {
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sources-info p {
+    color: var(--light-text);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.sources-info a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 600;
+}
+
+.sources-info a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+.footer {
+    margin-top: 25px;
+    text-align: center;
+    color: #777;
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 1;
+}
+
+.company-name {
+    color: var(--primary-color);
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.company-name:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+.brainrot-icon {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    animation: spin 10s linear infinite;
+    margin-right: 8px;
+}
+
+.error-message {
+    color: var(--error-color);
+    margin-top: 5px;
+    font-size: 0.85rem;
+    min-height: 20px;
+}
+
+.copy-error {
+    color: var(--error-color);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 8px;
+    min-height: 20px;
+}
+
+.mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 400px;
+    max-height: 70vh;
+    background-color: #2a2a2a;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    border: 3px solid var(--primary-color);
+    overflow: hidden;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.mobile-menu-header {
+    padding: 15px;
+    background-color: #333;
+    border-bottom: 3px solid var(--primary-color);
+    font-weight: bold;
+    color: var(--accent-color);
+    text-align: center;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mobile-menu-header i {
+    font-size: 1.2rem;
+}
+
+.mobile-menu-items {
+    padding: 10px;
+    overflow-y: auto;
+    max-height: calc(70vh - 60px);
+}
+
+.mobile-menu-item {
+    padding: 12px 16px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #3a3a3a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.mobile-menu-item:hover, .mobile-menu-item:active {
+    background-color: var(--primary-color);
+    color: var(--button-text-color);
+    transform: translateX(5px);
+}
+
+.mobile-menu-item.selected {
+    background-color: var(--secondary-color);
+    color: var(--button-text-color);
+    font-weight: bold;
+}
+
+.mobile-menu-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); }
+    50% { box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7); }
+    100% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); }
+}
+
+@keyframes pulseWarning {
+    0% { box-shadow: 0 0 0 0 rgba(255, 85, 85, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 85, 85, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 85, 85, 0); }
+}
+
+@keyframes pulseSuccess {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes blinkRed {
+    0%, 100% { background: linear-gradient(to right, var(--error-color), #ff3333); }
+    50% { background: linear-gradient(to right, #ff3333, var(--error-color)); }
+}
+
+@media (max-width: 1024px) {
+    .container { 
+        padding: 30px 25px; 
+        max-width: 95%;
+        margin-top: 10px;
+    }
+    .calculator-form { 
+        grid-template-columns: 1fr; 
+        gap: 20px; 
+    }
+    .calculate-btn { 
+        grid-column: span 1; 
+        width: 100%; 
+        margin-top: 10px;
+    }
+    .header h1 { 
+        font-size: 2.4rem; 
+        margin-bottom: 15px;
+    }
+    .header p {
+        font-size: 1.05rem;
+        line-height: 1.5;
+    }
+    .select-button { 
+        flex-direction: row; 
+        align-items: center; 
+        gap: 15px; 
+        justify-content: space-between;
+    }
+    .selected-value { 
+        margin-left: 0; 
+        margin-top: 0;
+        font-size: 1.3rem;
+        min-width: 80px;
+    }
+    .vertical-menu { 
+        display: none; 
+    }
+    .mobile-menu { 
+        display: block; 
+    }
+    .time-units { 
+        flex-direction: row; 
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .result-value { 
+        font-size: 2rem; 
+        padding: 15px;
+        min-height: 75px;
+    }
+    .history-panel { 
+        width: 340px; 
+        max-height: 480px; 
+        top: 85px; 
+        left: 15px;
+    }
+    .profile-panel { 
+        width: 320px; 
+        right: 20px; 
+        top: 85px;
+    }
+    .cost-input-container, .income-input-container {
+        flex-direction: row;
+        gap: 10px;
+    }
+    .suffix-btn, .select-btn {
+        min-width: 100px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        height: 50px;
+    }
+    .suffix-btn span, .select-btn span {
+        font-size: 0.95rem;
+    }
+    .calculate-btn {
+        height: 58px;
+        font-size: 1.2rem;
+        padding: 15px;
+    }
+    .copy-result-btn {
+        height: 46px;
+        font-size: 1rem;
+    }
+    .input-group label {
+        font-size: 1.05rem;
+    }
+    .cost-input-container input, .income-input-container input {
+        font-size: 1.1rem;
+        padding: 13px 15px;
+    }
+    .mobile-menu-overlay {
+        display: block;
+    }
+}
+
+@media (max-width: 820px) and (min-width: 768px) {
+    .container {
+        max-width: 92%;
+        padding: 28px 22px;
+        margin-top: 5px;
+    }
+    .calculator-form {
+        gap: 18px;
+    }
+    .cost-input-container, .income-input-container {
+        gap: 8px;
+    }
+    .suffix-btn, .select-btn {
+        min-width: 95px;
+        padding: 11px 14px;
+        font-size: 0.95rem;
+        height: 48px;
+    }
+    .selected-value {
+        font-size: 1.25rem;
+        min-width: 75px;
+    }
+    .calculate-btn {
+        height: 56px;
+        font-size: 1.15rem;
+    }
+    .result-value {
+        font-size: 1.9rem;
+    }
+    .history-btn, .profile-btn {
+        width: 46px;
+        height: 46px;
+        top: 15px;
+    }
+    .history-btn {
+        left: 15px;
+    }
+    .profile-btn {
+        right: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    body { 
+        padding: 15px; 
+    }
+    .container { 
+        padding: 25px 20px; 
+        max-width: 100%; 
+        border-radius: 18px; 
+        margin-top: 15px; 
+    }
+    .calculator-form { 
+        grid-template-columns: 1fr; 
+        gap: 18px; 
+    }
+    .header h1 { 
+        font-size: 2.1rem; 
+        margin-bottom: 12px;
+    }
+    .header p { 
+        font-size: 1rem; 
+        line-height: 1.5;
+    }
+    .history-btn, .profile-btn { 
+        width: 46px; 
+        height: 46px; 
+    }
+    .history-btn { 
+        top: 15px; 
+        left: 15px; 
+    }
+    .profile-btn { 
+        top: 15px; 
+        right: 15px; 
+    }
+    .profile-panel { 
+        top: 70px; 
+        right: 15px; 
+        width: calc(100vw - 40px); 
+        max-width: 320px; 
+    }
+    .history-panel { 
+        top: 75px; 
+        left: 15px; 
+        width: calc(100vw - 30px); 
+        max-height: 420px; 
+    }
+    .cost-input-container, .income-input-container { 
+        flex-direction: column; 
+        gap: 8px; 
+    }
+    .suffix-btn, .select-btn { 
+        width: 100%; 
+        min-width: auto; 
+        padding: 12px 14px; 
+        font-size: 1rem; 
+        height: 48px; 
+        justify-content: center;
+    }
+    .select-button {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .selected-value {
+        text-align: center;
+        margin-top: 5px;
+        font-size: 1.3rem;
+    }
+    .calculate-btn { 
+        padding: 14px; 
+        font-size: 1.15rem; 
+        height: 54px; 
+    }
+    .result-value { 
+        font-size: 1.8rem; 
+        padding: 12px; 
+        min-height: 65px; 
+    }
+    .game-info, .sources-info, .result-container { 
+        padding: 20px; 
+    }
+    .vertical-menu {
+        display: none;
+    }
+    .mobile-menu-overlay {
+        display: block;
+    }
+    .mobile-menu {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 { 
+        font-size: 1.8rem; 
+    }
+    .container { 
+        padding: 20px 16px; 
+        margin-top: 12px; 
+    }
+    .calculator-form { 
+        gap: 15px; 
+    }
+    .input-group label { 
+        font-size: 1rem; 
+    }
+    .cost-input-container input, .income-input-container input { 
+        padding: 12px 14px; 
+        font-size: 1.05rem; 
+    }
+    .suffix-btn, .select-btn { 
+        padding: 12px; 
+        font-size: 0.95rem; 
+        height: 46px; 
+    }
+    .calculate-btn { 
+        padding: 14px; 
+        font-size: 1.1rem; 
+        height: 52px; 
+    }
+    .result-value { 
+        font-size: 1.6rem; 
+        padding: 10px;
+        min-height: 60px;
+    }
+    .history-item-params { 
+        grid-template-columns: 1fr; 
+        gap: 4px;
+    }
+    .brainrot-icon { 
+        font-size: 1.6rem; 
+    }
+    .gender-btn { 
+        font-size: 0.92rem; 
+        padding: 9px; 
+    }
+    .mobile-menu { 
+        width: 92%; 
+        max-width: 360px; 
+    }
+    .profile-panel {
+        width: calc(100vw - 30px);
+        max-width: 300px;
+    }
+    .history-panel {
+        width: calc(100vw - 24px);
+        max-height: 400px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .mobile-menu-overlay,
+    .mobile-menu {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+    .container {
+        max-width: 90%;
+        padding: 25px;
+    }
+    .calculator-form {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+    .history-panel,
+    .profile-panel {
+        max-height: 60vh;
+    }
+}
